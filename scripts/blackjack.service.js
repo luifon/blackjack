@@ -13,6 +13,8 @@ export default class BlackjackService {
         this.deck = this.createDeck();
         this.playerScore = 0;
         this.dealerScore = 0;
+        this.playerRoundsWon = 0;
+        this.dealerRoundsWon = 0;
 
         this.shuffleDeck(this.deck);
 
@@ -72,17 +74,11 @@ export default class BlackjackService {
     }
 
     determineWinner(playerScore, dealerScore) {
-        if (playerScore > 21) {
-            return 'dealer';
-        } else if (dealerScore > 21) {
-            return 'player';
-        } else if (playerScore > dealerScore) {
-            return 'player';
-        } else if (playerScore < dealerScore) {
-            return 'dealer';
-        } else {
-            return 'draw';
-        }
+        if (playerScore > 21) return 'dealer';
+        if (dealerScore > 21) return 'player';
+        if (playerScore > dealerScore) return 'player';
+        if (playerScore < dealerScore) return 'dealer';
+        return 'draw';
     }
 
     playerHit() {
