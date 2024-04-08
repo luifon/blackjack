@@ -1,7 +1,5 @@
 import UI from '../scripts/ui';
 
-// const { UI } = require('../scripts/ui');
-
 document.body.innerHTML = `
 <div>
   <div id="player-hand"></div>
