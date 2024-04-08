@@ -2,7 +2,8 @@
   "name": "blackjack",
   "version": "1.0.0",
   "description": "",
-  "main": "blackjackService.js",
+  "main": "script.js",
+  "type": "module",
   "scripts": {
     "test": "jest",
     "run": "http-server --port 3030"
@@ -11,6 +12,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "jest": "^29.7.0"
+    "@babel/preset-env": "^7.24.4",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jsdom": "^24.0.0"
+  },
+  "dependencies": {
+    "@babel/core": "^7.24.4"
   }
 }
