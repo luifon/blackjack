@@ -5,7 +5,7 @@
   "main": "blackjackService.js",
   "scripts": {
     "test": "jest",
-    "run": "http-server"
+    "run": "http-server --port 3030"
   },
   "keywords": [],
   "author": "",
