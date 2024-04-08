@@ -1,18 +1,29 @@
 import UI from '../scripts/ui';
 
 document.body.innerHTML = `
-<div>
-  <div id="player-hand"></div>
-  <div id="dealer-hand"></div>
-  <div id="dealer-round-score"></div>
-  <div id="player-round-score"></div>
-  <div id="dealer-score"></div>
-  <div id="message"></div>
-  <button id="start-game-button"></button>
-  <button id="start-round-button"></button>
-  <button id="hit-button"></button>
-  <button id="stand-button"></button>
-</div>
+    <div class="container">
+      <section class="menu">
+        <button id="start-game-button">Start New Game</button>
+        <button id="start-round-button">Start New Round</button>
+      </section>
+      <hr class="hands-separator" />
+      <section class="dealer-section">
+        <h3>Dealer Rounds Won: <span id="dealer-round-score"></span></h3>
+        <div id="dealer-hand" class="hand"></div>
+        <div id="dealer-score" class="score"></div>
+      </section>
+      <hr class="hands-separator" />
+      <section class="player-section">
+        <h3 class="">
+          Player Rounds Won: <span id="player-round-score"></span>
+        </h3>
+        <div id="player-hand" class="hand"></div>
+        <div id="player-score" class="score"></div>
+      </section>
+      <div id="message"></div>
+      <button id="hit-button">Hit</button>
+      <button id="stand-button">Stand</button>
+    </div>
 `;
 
 describe('UI Class', () => {
@@ -86,5 +97,46 @@ describe('UI Class', () => {
     ui.enableButtons();
     expect(document.getElementById('hit-button').disabled).toBe(false);
     expect(document.getElementById('stand-button').disabled).toBe(false);
+  });
+
+
+  test('bindStartGameButton calls provided handler when start game button is clicked', () => {
+    const handler = jest.fn();
+    ui.bindStartGameButton(handler);
+
+    const startGameButton = document.getElementById('start-game-button');
+    startGameButton.click();
+
+    expect(handler).toHaveBeenCalled();
+  });
+
+  test('bindStartRoundButton calls provided handler when start round button is clicked', () => {
+    const handler = jest.fn();
+    ui.bindStartRoundButton(handler);
+
+    const startRoundButton = document.getElementById('start-round-button');
+    startRoundButton.click();
+
+    expect(handler).toHaveBeenCalled();
+  });
+
+  test('bindHitButton calls provided handler when hit button is clicked', () => {
+    const handler = jest.fn();
+    ui.bindHitButton(handler);
+
+    const hitButton = document.getElementById('hit-button');
+    hitButton.click();
+
+    expect(handler).toHaveBeenCalled();
+  });
+
+  test('bindStandButton calls provided handler when stand button is clicked', () => {
+    const handler = jest.fn();
+    ui.bindStandButton(handler);
+
+    const standButton = document.getElementById('stand-button');
+    standButton.click();
+
+    expect(handler).toHaveBeenCalled();
   });
 });
