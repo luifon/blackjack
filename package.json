@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "jest",
-    "run": "http-server --port 3030"
+    "serve": "http-server --port 3030"
   },
   "keywords": [],
   "author": "",
