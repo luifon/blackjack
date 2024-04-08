@@ -1,36 +1,32 @@
+import Player from './player.model.js';
+
 export default class BlackjackService {
     constructor() {
         this.deck = [];
-        this.playerHand = [];
-        this.dealerHand = [];
-        this.playerScore = 0;
-        this.dealerScore = 0;
-        this.playerRoundsWon = 0;
-        this.dealerRoundsWon = 0;
+        this.player = new Player();
+        this.dealer = new Player();
+    }
+
+    resetRounds() {
+        this.player.rounds = 0;
+        this.dealer.rounds = 0;
     }
 
     startGame() {
         this.deck = this.createDeck();
-        this.playerScore = 0;
-        this.dealerScore = 0;
-        this.playerRoundsWon = 0;
-        this.dealerRoundsWon = 0;
+        this.player.score = 0;
+        this.dealer.score = 0;
 
         this.shuffleDeck(this.deck);
 
-        this.playerHand = [this.drawCard(), this.drawCard()];
-        this.dealerHand = [this.drawCard(), this.drawCard()];
-
-        return {
-            playerHand: this.playerHand,
-            dealerHand: [this.dealerHand[0], 'hidden'],
-            playerScore: this.calculateHandScore(this.playerHand),
-            dealerScore: this.calculateHandScore([this.dealerHand[0]]),
-        };
+        this.player.hand = [this.drawCard(), this.drawCard()];
+        this.player.score = this.calculateHandScore(this.player.hand);
+        this.dealer.hand = [this.drawCard(), this.drawCard()];
+        this.dealer.score = this.calculateHandScore([this.dealer.hand[0]]);
     }
 
     createDeck() {
-        const suits = ['H', 'D', 'C', 'S'];
+        const suits = ['H', 'D', 'C', 'S']; // Hearts, Diamonds, Clubs, Spades
         const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
 
         return suits.flatMap(suit =>
@@ -74,33 +70,31 @@ export default class BlackjackService {
     }
 
     determineWinner(playerScore, dealerScore) {
-        if (playerScore > 21) return 'dealer';
-        if (dealerScore > 21) return 'player';
-        if (playerScore > dealerScore) return 'player';
-        if (playerScore < dealerScore) return 'dealer';
+        if (playerScore > 21) return 'Dealer';
+        if (dealerScore > 21) return 'Player';
+        if (playerScore > dealerScore) return 'Player';
+        if (playerScore < dealerScore) return 'Dealer';
         return 'draw';
     }
 
     playerHit() {
         const card = this.drawCard();
-        this.playerHand.push(card);
-        const playerScore = this.calculateHandScore(this.playerHand);
+        this.player.hand.push(card);
+        this.playerScore = this.calculateHandScore(this.player.hand);
 
-        return { card, playerScore };
+        return this.playerScore;
     }
 
     dealerTurn() {
-        // Reveal dealer's hidden card
-        this.dealerHand[1] = this.drawCard();
-        let dealerScore = this.calculateHandScore(this.dealerHand);
+        this.dealer.hand[1] = this.drawCard();
+        this.dealerScore = this.calculateHandScore(this.dealer.hand);
 
-        // Dealer hits until score is 17 or higher
-        while (dealerScore < 17) {
+        while (this.dealerScore < 17) {
             const card = this.drawCard();
-            this.dealerHand.push(card);
-            dealerScore = this.calculateHandScore(this.dealerHand);
+            this.dealer.hand.push(card);
+            this.dealerScore = this.calculateHandScore(this.dealer.hand);
         }
 
-        return dealerScore;
+        return this.dealerScore;
     }
 }

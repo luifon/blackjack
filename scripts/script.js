@@ -4,55 +4,79 @@ import BlackjackService from './blackjack.service.js';
 document.addEventListener('DOMContentLoaded', () => {
     const ui = new UI();
     const blackjackService = new BlackjackService();
-    let gameInProgress = false;
+    let isGameInProgress = false;
+    let isRoundInProgress = false;
 
     const startNewGame = () => {
-        ui.clearUI();
-        const { playerHand, dealerHand, playerScore, dealerScore } = blackjackService.startGame();
-        ui.displayPlayerHand(playerHand);
-        ui.displayDealerHand(dealerHand, true);
-        ui.displayPlayerScore(playerScore);
-        ui.displayDealerScore(dealerScore);
-        ui.enableButtons();
-        ui.displayMessage('Game started. Hit or stand?');
-        gameInProgress = true;
+        blackjackService.resetRounds();
+        startGameRound(true);
     };
 
+    const startNewRound = () => {
+        if (!isRoundInProgress) {
+            startGameRound(false);
+        }
+    }
+
+    const startGameRound = (isNewGame) => {
+        ui.clearUI(isNewGame);
+        blackjackService.startGame();
+        ui.displayPlayerHand(blackjackService.player.hand);
+        ui.displayDealerHand(blackjackService.dealer.hand, true);
+        ui.displayPlayerScore(blackjackService.player.score);
+        ui.displayDealerScore(blackjackService.dealer.score);
+        ui.enableButtons();
+        ui.displayMessage('Game started. Hit or stand?');
+        isGameInProgress = true;
+        isRoundInProgress = true;
+    }
+
     const hit = () => {
-        if (gameInProgress) {
-            const { card, playerScore } = blackjackService.playerHit();
-            ui.displayPlayerHand(blackjackService.playerHand);
+        if (isGameInProgress) {
+            const playerScore = blackjackService.playerHit();
+            ui.displayPlayerHand(blackjackService.player.hand);
             ui.displayPlayerScore(playerScore);
             if (playerScore > 21) {
+                blackjackService.dealer.rounds++;
                 endGame('Dealer wins. Player busts.');
             }
         }
     };
 
     const stand = () => {
-        if (gameInProgress) {
+        if (isGameInProgress) {
             const dealerScore = blackjackService.dealerTurn();
-            ui.displayDealerHand(blackjackService.dealerHand, false);
+            ui.displayDealerHand(blackjackService.dealer.hand, false);
             ui.displayDealerScore(dealerScore);
-            const playerScore = blackjackService.calculateHandScore(blackjackService.playerHand);
+            const playerScore = blackjackService.calculateHandScore(blackjackService.player.hand);
             const winner = blackjackService.determineWinner(playerScore, dealerScore);
-            if (winner === 'player') {
-                endGame('Player wins.');
-            } else if (winner === 'dealer') {
-                endGame('Dealer wins.');
-            } else {
-                endGame('It\'s a draw.');
-            }
+            const winnerMessage = getWinnerMessage(winner);
+            endGame(winnerMessage);
         }
     };
+
+    const getWinnerMessage = (winner) => {
+        if (winner === 'Player') {
+            blackjackService.player.rounds++;
+            return `${winner} wins.`
+        };
+        if (winner === 'Dealer') {
+            blackjackService.dealer.rounds++;
+            return `${winner} wins.`
+        };
+        return 'It\'s a draw.';
+    }
 
     const endGame = (message) => {
         ui.disableButtons();
         ui.displayMessage(message);
-        gameInProgress = false;
+        ui.updateRounds(blackjackService.player.rounds, blackjackService.dealer.rounds);
+        isGameInProgress = false;
+        isRoundInProgress = false;
     };
 
-    ui.bindStartButton(startNewGame);
+    ui.bindStartGameButton(startNewGame);
+    ui.bindStartRoundButton(startNewRound);
     ui.bindHitButton(hit);
     ui.bindStandButton(stand);
 });

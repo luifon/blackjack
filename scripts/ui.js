@@ -7,7 +7,8 @@ export default class UI {
         this.dealerScoreElement = document.getElementById('dealer-score');
         this.playerScoreElement = document.getElementById('player-score');
         this.messageElement = document.getElementById('message');
-        this.startButton = document.getElementById('start-button');
+        this.startGameButton = document.getElementById('start-game-button');
+        this.startRoundButton = document.getElementById('start-round-button');
         this.hitButton = document.getElementById('hit-button');
         this.standButton = document.getElementById('stand-button');
     }
@@ -22,7 +23,7 @@ export default class UI {
         });
     }
 
-    displayDealerHand(cards, hideSecondCard) {
+    displayDealerHand(cards, hideSecondCard = false) {
         this.dealerHandElement.innerHTML = '';
         cards.forEach((card, index) => {
             const cardElement = document.createElement('img');
@@ -48,14 +49,21 @@ export default class UI {
         this.messageElement.textContent = message;
     }
 
-    clearUI() {
+    updateRounds(playerRounds, dealerRounds) {
+        this.playerRoundsElement.textContent = playerRounds;
+        this.dealerRoundsElement.textContent = dealerRounds;
+    }
+
+    clearUI(isNewGame) {
         this.playerHandElement.innerHTML = '';
         this.dealerHandElement.innerHTML = '';
         this.playerScoreElement.textContent = '';
         this.dealerScoreElement.textContent = '';
         this.messageElement.textContent = '';
-        this.dealerRoundsElement.textContent = '0';
-        this.playerRoundsElement.textContent = '0';
+        if (isNewGame) {
+            this.dealerRoundsElement.textContent = '0';
+            this.playerRoundsElement.textContent = '0';
+        }
     }
 
     disableButtons() {
@@ -68,8 +76,12 @@ export default class UI {
         this.standButton.disabled = false;
     }
 
-    bindStartButton(handler) {
-        this.startButton.addEventListener('click', handler);
+    bindStartGameButton(handler) {
+        this.startGameButton.addEventListener('click', handler);
+    }
+
+    bindStartRoundButton(handler) {
+        this.startRoundButton.addEventListener('click', handler);
     }
 
     bindHitButton(handler) {
