@@ -86,7 +86,6 @@ export default class BlackjackService {
     }
 
     dealerTurn() {
-        this.dealer.hand[1] = this.drawCard();
         this.dealerScore = this.calculateHandScore(this.dealer.hand);
 
         while (this.dealerScore < 17) {
