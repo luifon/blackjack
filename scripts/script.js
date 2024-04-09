@@ -78,11 +78,15 @@ export default class Script {
     };
 
     bindButtons = () => {
+        this.ui.bindStartGameButton(this.startNewGame);
+        this.ui.bindStartRoundButton(this.startNewRound);
+        this.ui.bindHitButton(this.hit);
+        this.ui.bindStandButton(this.stand);
+    }
+
+    appStart = () => {
         document.addEventListener('DOMContentLoaded', () => {
-            this.ui.bindStartGameButton(this.startNewGame);
-            this.ui.bindStartRoundButton(this.startNewRound);
-            this.ui.bindHitButton(this.hit);
-            this.ui.bindStandButton(this.stand);
+            this.bindButtons();
         });
     }
 
@@ -90,4 +94,4 @@ export default class Script {
 
 const script = new Script();
 
-script.bindButtons();
+script.appStart();

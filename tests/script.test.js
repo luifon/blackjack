@@ -184,5 +184,22 @@ describe('Script', () => {
     });
 
 
+    describe('bindButtons', () => {
+        test('should bind UI buttons to their corresponding methods', () => {
+            jest.spyOn(mockUI, 'bindStartGameButton');
+            jest.spyOn(mockUI, 'bindStartRoundButton');
+            jest.spyOn(mockUI, 'bindHitButton');
+            jest.spyOn(mockUI, 'bindStandButton');
+
+            script.bindButtons();
+
+            expect(mockUI.bindStartGameButton).toHaveBeenCalled();
+            expect(mockUI.bindStartRoundButton).toHaveBeenCalled();
+            expect(mockUI.bindHitButton).toHaveBeenCalled();
+            expect(mockUI.bindStandButton).toHaveBeenCalled();
+        });
+    });
+
+
 });
 
