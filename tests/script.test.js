@@ -4,7 +4,6 @@ import Script from '../scripts/script.js';
 import UI from '../scripts/ui.js';
 import BlackjackService from '../scripts/blackjack.service.js';
 
-
 describe('Script', () => {
     let script;
     let mockBlackjackService;
@@ -71,7 +70,7 @@ describe('Script', () => {
     describe('hit', () => {
         test('should hit if game is in progress and update player score', () => {
             script.isGameInProgress = true;
-            mockBlackjackService.playerHit.mockReturnValue(18); // Mocking player score
+            mockBlackjackService.playerHit.mockReturnValue(18);
 
             script.hit();
 
@@ -82,12 +81,12 @@ describe('Script', () => {
 
         test('should end game if player busts (score > 21)', () => {
             script.isGameInProgress = true;
-            mockBlackjackService.playerHit.mockReturnValue(22); // Mocking player bust
+            mockBlackjackService.playerHit.mockReturnValue(22);
             jest.spyOn(script, 'endGame');
 
             script.hit();
 
-            expect(mockBlackjackService.dealer.rounds).toBe(1); // Dealer rounds incremented
+            expect(mockBlackjackService.dealer.rounds).toBe(1);
             expect(script.endGame).toHaveBeenCalledWith('Dealer wins. Player busts.');
         });
 
@@ -103,6 +102,87 @@ describe('Script', () => {
             expect(script.endGame).not.toHaveBeenCalled();
         });
     });
+
+
+    describe('stand', () => {
+        test('should end game and determine winner when player stands', () => {
+            script.isGameInProgress = true;
+            mockBlackjackService.dealerTurn.mockReturnValue(18);
+            mockBlackjackService.calculateHandScore.mockReturnValue(20);
+            mockBlackjackService.determineWinner.mockReturnValue('Player');
+            const expectedWinnerMessage = 'Player wins.';
+            jest.spyOn(script, 'endGame');
+
+            script.stand();
+
+            expect(mockBlackjackService.dealerTurn).toHaveBeenCalled();
+            expect(mockUI.displayDealerHand).toHaveBeenCalledWith(mockBlackjackService.dealer.hand, false);
+            expect(mockUI.displayDealerScore).toHaveBeenCalledWith(18);
+            expect(mockBlackjackService.calculateHandScore).toHaveBeenCalledWith(mockBlackjackService.player.hand);
+            expect(mockBlackjackService.determineWinner).toHaveBeenCalledWith(20, 18);
+            expect(script.endGame).toHaveBeenCalledWith(expectedWinnerMessage);
+        });
+
+        test('should not stand if game is not in progress', () => {
+            script.isGameInProgress = false;
+            jest.spyOn(script, 'endGame');
+
+            script.hit();
+
+            expect(mockBlackjackService.dealerTurn).not.toHaveBeenCalled();
+            expect(mockUI.displayDealerHand).not.toHaveBeenCalled();
+            expect(mockUI.displayDealerScore).not.toHaveBeenCalled();
+            expect(script.endGame).not.toHaveBeenCalled();
+        });
+    })
+
+    describe('startGameRound', () => {
+        test('should start a new game round', () => {
+            const isNewGame = true;
+
+            script.startGameRound(isNewGame);
+
+            expect(mockUI.clearUI).toHaveBeenCalledWith(isNewGame);
+            expect(mockBlackjackService.startGame).toHaveBeenCalled();
+            expect(mockUI.displayPlayerHand).toHaveBeenCalledWith(mockBlackjackService.player.hand);
+            expect(mockUI.displayDealerHand).toHaveBeenCalledWith(mockBlackjackService.dealer.hand, true);
+            expect(mockUI.displayPlayerScore).toHaveBeenCalledWith(mockBlackjackService.player.score);
+            expect(mockUI.displayDealerScore).toHaveBeenCalledWith(mockBlackjackService.dealer.score);
+            expect(mockUI.enableButtons).toHaveBeenCalled();
+            expect(mockUI.displayMessage).toHaveBeenCalledWith('Game started. Hit or stand?');
+            expect(script.isGameInProgress).toBe(true);
+            expect(script.isRoundInProgress).toBe(true);
+        });
+    })
+
+    describe('getWinnerMessage', () => {
+        test('should return player wins message and update player rounds', () => {
+            const winner = 'Player';
+
+            const message = script.getWinnerMessage(winner);
+
+            expect(message).toBe('Player wins.');
+            expect(mockBlackjackService.player.rounds).toBe(1);
+        });
+
+        test('should return dealer wins message and update dealer rounds', () => {
+            const winner = 'Dealer';
+
+            const message = script.getWinnerMessage(winner);
+
+            expect(message).toBe('Dealer wins.');
+            expect(mockBlackjackService.dealer.rounds).toBe(1);
+        });
+
+        test('should return draw message', () => {
+            const winner = 'Draw';
+
+            const message = script.getWinnerMessage(winner);
+
+            expect(message).toBe("It's a draw.");
+        });
+    });
+
 
 });
 
